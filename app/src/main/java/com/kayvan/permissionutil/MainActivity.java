@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void doOnPermissionDenied(String permission) {
-        updateStatus(permission + " Permission Denied or is on \"Do Not SHow Again\"");
+        updateStatus(permission + " Permission Denied or is on \"Do Not Show Again\"");
     }
 
     private void doOnPermissionGranted(String permission) {

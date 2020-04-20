@@ -3,6 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/KayvanLibs.iml" filepath="$PROJECT_DIR$/KayvanLibs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PermissionUtilFounders.iml" filepath="$PROJECT_DIR$/PermissionUtilFounders.iml" group="PermissionUtilFounders" />
+      <module fileurl="file://$PROJECT_DIR$/PermissionUtils/PermissionUtilFounders-PermissionUtils.iml" filepath="$PROJECT_DIR$/PermissionUtils/PermissionUtilFounders-PermissionUtils.iml" group="PermissionUtilFounders/PermissionUtils" />
+      <module fileurl="file://$PROJECT_DIR$/app/PermissionUtilFounders-app.iml" filepath="$PROJECT_DIR$/app/PermissionUtilFounders-app.iml" group="PermissionUtilFounders/app" />
       <module fileurl="file://$PROJECT_DIR$/PermissionUtils/PermissionUtils.iml" filepath="$PROJECT_DIR$/PermissionUtils/PermissionUtils.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
