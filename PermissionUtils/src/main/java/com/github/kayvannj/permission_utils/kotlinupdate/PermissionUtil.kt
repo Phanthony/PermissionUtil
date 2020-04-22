@@ -60,7 +60,6 @@ class PermissionUtil {
 
         fun ask(reqCode: Int): PermissionRequestObject {
             mRequestCode = reqCode
-            val length = mPermissionNames.size
             for (permission in mPermissionNames) {
                 mPermissionsWeDontHave.add(SinglePermission(permission))
             }
