@@ -8,11 +8,11 @@ Adding runtime permissions is not hard but having to seperate your code and move
 ### How?
 Anywhere in your ```AppCompatActivity``` or ```Fragment``` that you want to ask for user's permisssion
 ```kotlin
-mRequestObject = requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE).onAllGranted({
+mRequestObject = requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE).onAllGranted{
                         //Happy Path
-                }).onAnyDenied({
+                }.onAnyDenied{
                         //Sad Path
-                }).ask(REQUEST_CODE_STORAGE); // REQUEST_CODE_STORAGE is what ever int you want (should be distinct)
+                }.ask(REQUEST_CODE_STORAGE); // REQUEST_CODE_STORAGE is what ever int you want (should be distinct)
 ```
 And add this to ```onRequestPermissionsResult()```
 ```java
