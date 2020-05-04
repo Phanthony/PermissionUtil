@@ -1,5 +1,4 @@
-package com.github.kayvannj.permission_utils.kotlinupdate
-
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
@@ -27,7 +26,7 @@ import android.util.Log
 
 class PermissionUtil {
 
-    class PermissionObject(val mActivity: AppCompatActivity? = null, val mFragment: Fragment? = null) {
+    class PermissionObject(val mActivity: Activity? = null, val mFragment: Fragment? = null) {
 
         fun has(permissionName: String): Boolean {
             val permissionCheck = if (mActivity == null) {
@@ -47,7 +46,7 @@ class PermissionUtil {
         }
     }
 
-    class PermissionRequestObject(val mActivity: AppCompatActivity? = null, val mFragment: Fragment? = null, var mPermissionNames: Array<String>) {
+    class PermissionRequestObject(val mActivity: Activity? = null, val mFragment: Fragment? = null, var mPermissionNames: Array<String>) {
 
         val TAG = PermissionObject::class.simpleName
         var mRequestCode: Int = Int.MIN_VALUE
@@ -85,24 +84,24 @@ class PermissionUtil {
             for (i in mPermissionsWeDontHave.indices) {
                 val perm = mPermissionsWeDontHave[i]
                 val checkRes = if (mActivity != null) {
-                    ContextCompat.checkSelfPermission(mActivity, perm.getPermissionName())
+                    ContextCompat.checkSelfPermission(mActivity, perm.permissionName)
                 } else {
-                    ContextCompat.checkSelfPermission(mFragment!!.requireContext(), perm.getPermissionName())
+                    ContextCompat.checkSelfPermission(mFragment!!.requireContext(), perm.permissionName)
                 }
                 if (checkRes != PackageManager.PERMISSION_GRANTED) {
                     permissionsStillNeeded.add(perm)
                     val shouldShowRequestPermissionRationale = if (mActivity != null) {
-                        ActivityCompat.shouldShowRequestPermissionRationale(mActivity, perm.getPermissionName())
+                        ActivityCompat.shouldShowRequestPermissionRationale(mActivity, perm.permissionName)
                     } else {
-                        mFragment!!.shouldShowRequestPermissionRationale(perm.getPermissionName())
+                        mFragment!!.shouldShowRequestPermissionRationale(perm.permissionName)
                     }
                     if (shouldShowRequestPermissionRationale) {
-                        perm.setRationalNeeded(true)
+                        perm.mRationalNeeded = true
                     }
                 }
             }
             mPermissionsWeDontHave = permissionsStillNeeded
-            mPermissionNames = Array(permissionsStillNeeded.size) { permissionsStillNeeded[it].getPermissionName() }
+            mPermissionNames = Array(permissionsStillNeeded.size) { permissionsStillNeeded[it].permissionName }
             return mPermissionsWeDontHave.size != 0
         }
 
@@ -145,9 +144,8 @@ class PermissionUtil {
          * <pre>
          * {@code
          *
-         * public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-         *      if (mStoragePermissionRequest != null)
-         *          mStoragePermissionRequest.onRequestPermissionsResult(requestCode, permissions,grantResults);
+         * public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
+         *        mStoragePermissionRequest?.onRequestPermissionsResult(requestCode, permissions,grantResults);
          * }
          * }
          * </pre>
@@ -155,33 +153,33 @@ class PermissionUtil {
         fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: Array<Int>) {
             if (mRequestCode == requestCode) {
                 if (mResultFunc != null) {
-                    Log.i(TAG, "Calling Results Func");
-                    mResultFunc!!(requestCode, permissions, grantResults)
+                    Log.i(TAG, "Calling Results Func")
+                    mResultFunc?.invoke(requestCode, permissions, grantResults)
                     return
                 }
             }
 
             for (i in permissions.indices) {
                 if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
-                    if (mPermissionsWeDontHave[i].isRationalNeeded() && mRationalFunc != null) {
+                    if (mPermissionsWeDontHave[i].isRationalNeeded && mRationalFunc != null) {
                         Log.i(TAG, "Calling Rational Func")
-                        mRationalFunc!!(mPermissionsWeDontHave[i].getPermissionName())
+                        mRationalFunc?.invoke(mPermissionsWeDontHave[i].permissionName)
                     } else if (mDenyFunc != null) {
                         Log.i(TAG, "Calling Deny Func")
-                        mDenyFunc!!()
+                        mDenyFunc?.invoke()
                     } else {
                         Log.e(TAG, "NULL DENY FUNCTIONS")
                     }
 
                     // terminate if there is at least one deny
-                    return;
+                    return
                 }
             }
 
             // there has not been any denies
             if (mGrantFunc != null) {
-                Log.i(TAG, "Calling Grant Func");
-                mGrantFunc!!()
+                Log.i(TAG, "Calling Grant Func")
+                mGrantFunc?.invoke()
             } else {
                 Log.e(TAG, "NULL GRANT FUNCTIONS")
             }

@@ -8,11 +8,11 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import butterknife.ButterKnife
-import com.github.kayvannj.permission_utils.kotlinupdate.PermissionUtil
-import com.github.kayvannj.permission_utils.kotlinupdate.hasPermission
-import com.github.kayvannj.permission_utils.kotlinupdate.requestPermission
+import PermissionUtil
+import hasPermission
+import requestPermission
 
-class MainActivityKotlin : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
     val WRITE_EXTERNAL_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE
     val WRITE_CONTACTS = Manifest.permission.WRITE_CONTACTS
     private val REQUEST_CODE_CONTACTS = 1
@@ -43,11 +43,11 @@ class MainActivityKotlin : AppCompatActivity() {
             onAskBothPermissionsClick()
         }
         ButterKnife.bind(this)
-        Log.i("TEST","TEST ACTIVITY")
+        Log.i("TEST", "TEST ACTIVITY")
     }
 
     fun onCheckStoragePermissionClick() {
-        Log.i("TEST","TEST")
+        Log.i("TEST", "TEST")
         val hasStoragePermission = hasPermission(WRITE_EXTERNAL_STORAGE)
         updateStatus(if (hasStoragePermission) "Has Storage permission" else "Doesn't have Storage permission")
     }
@@ -99,15 +99,9 @@ class MainActivityKotlin : AppCompatActivity() {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        if (mStoragePermissionRequest != null) {
-            mStoragePermissionRequest!!.onRequestPermissionsResult(requestCode, permissions, grantResults.toTypedArray())
-        }
-        if (mContactsPermissionRequest != null) {
-            mContactsPermissionRequest!!.onRequestPermissionsResult(requestCode, permissions, grantResults.toTypedArray())
-        }
-        if (mBothPermissionRequest != null) {
-            mBothPermissionRequest!!.onRequestPermissionsResult(requestCode, permissions, grantResults.toTypedArray())
-        }
+        mStoragePermissionRequest?.onRequestPermissionsResult(requestCode, permissions, grantResults.toTypedArray())
+        mContactsPermissionRequest?.onRequestPermissionsResult(requestCode, permissions, grantResults.toTypedArray())
+        mBothPermissionRequest?.onRequestPermissionsResult(requestCode, permissions, grantResults.toTypedArray())
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }
