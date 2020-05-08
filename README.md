@@ -6,13 +6,31 @@ A simple wrapper around Android 6.0 runtime permission api
 Adding runtime permissions is not hard but having to seperate your code and move the methods around to capture callbacks is a little pain. This library provides a chained api to do all you need to do for supporting runtime permissions.
 
 ### How?
-Anywhere in your ```AppCompatActivity``` or ```Fragment``` that you want to ask for user's permisssion
+Anywhere in your ```AppCompatActivity``` or ```Fragment``` that you want to ask for user's permisssion you can define functions for all permissions granted or on any failure
 ```kotlin
-mRequestObject = requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE).onAllGranted{
+// REQUEST_CODE_STORAGE is what ever int you want (should be distinct)
+mRequestObject = requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_CODE_STORAGE,
+                onAllGranted = {
                         //Happy Path
-                }.onAnyDenied{
+                },
+                onAnyDenied = {
                         //Sad Path
-                }.ask(REQUEST_CODE_STORAGE); // REQUEST_CODE_STORAGE is what ever int you want (should be distinct)
+                }
+)
+```
+OR you can define 1 function that handles all results
+```kotlin
+onRequestPermissionResult() = requestPermission(WRITE_EXTERNAL_STORAGE, WRITE_CONTACTS, requestCode = REQUEST_CODE_BOTH,
+                onGivenResult = { requestCode, permissions, grantResults ->
+                    for (i in permissions.indices) {
+                        if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                            doOnPermissionGranted(permissions[i])
+                        } else {
+                            doOnPermissionDenied(permissions[i])
+                        }
+                    }
+                }
+        )
 ```
 And add this to ```onRequestPermissionsResult()```
 ```java
