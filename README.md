@@ -20,12 +20,14 @@ mRequestObject = requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, R
 ```
 OR you can define 1 function that handles all results
 ```kotlin
-mRequestObject = requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_CONTACTS, 
-requestCode = REQUEST_CODE_BOTH,onGivenResult = { requestCode, permissions, grantResults ->
+mBothPermissionRequest = requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_CONTACTS, requestCode = REQUEST_CODE_BOTH,
+                onGivenResult = { requestCode, permissions, grantResults ->
                     for (i in permissions.indices) {
                         if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                            //Happy Path
                             doOnPermissionGranted(permissions[i])
                         } else {
+                            //Sad Path
                             doOnPermissionDenied(permissions[i])
                         }
                     }
