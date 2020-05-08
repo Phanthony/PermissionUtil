@@ -16,10 +16,11 @@ mRequestObject = requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, R
                 onAnyDenied = {
                         //Sad Path
                 }
-)
+        )
 ```
 OR you can define 1 function that handles all results
 ```kotlin
+// REQUEST_CODE_STORAGE is what ever int you want (should be distinct)
 mBothPermissionRequest = requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_CONTACTS, requestCode = REQUEST_CODE_BOTH,
                 onGivenResult = { requestCode, permissions, grantResults ->
                     for (i in permissions.indices) {
@@ -34,6 +35,8 @@ mBothPermissionRequest = requestPermission(Manifest.permission.WRITE_EXTERNAL_ST
                 }
         )
 ```
+^ NOTE: If you're asking for more than 1 permission, you need to explicitly define ```requestCode = REQUEST_CODE_BOTH``` inside the parameter
+
 And add this to ```onRequestPermissionsResult()```
 ```java
 mRequestObject.onRequestPermissionsResult(requestCode, permissions, grantResults);
