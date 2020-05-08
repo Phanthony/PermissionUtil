@@ -72,9 +72,7 @@ class PermissionUtil {
                 }
             } else {
                 Log.i(TAG, "No need to ask for permission")
-                if (mGrantFunc != null) {
-                    mGrantFunc!!()
-                }
+                mGrantFunc?.invoke()
             }
             return this
         }
@@ -153,35 +151,24 @@ class PermissionUtil {
         fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: Array<Int>) {
             if (mRequestCode == requestCode) {
                 if (mResultFunc != null) {
-                    Log.i(TAG, "Calling Results Func")
                     mResultFunc?.invoke(requestCode, permissions, grantResults)
                     return
                 }
-            }
 
-            for (i in permissions.indices) {
-                if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
-                    if (mPermissionsWeDontHave[i].isRationalNeeded && mRationalFunc != null) {
-                        Log.i(TAG, "Calling Rational Func")
-                        mRationalFunc?.invoke(mPermissionsWeDontHave[i].permissionName)
-                    } else if (mDenyFunc != null) {
-                        Log.i(TAG, "Calling Deny Func")
-                        mDenyFunc?.invoke()
-                    } else {
-                        Log.e(TAG, "NULL DENY FUNCTIONS")
+                for (i in permissions.indices) {
+                    if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                        if (mPermissionsWeDontHave[i].isRationalNeeded && mRationalFunc != null) {
+                            mRationalFunc?.invoke(mPermissionsWeDontHave[i].permissionName)
+                        } else {
+                            mDenyFunc?.invoke()
+                        }
+                        // terminate if there is at least one deny
+                        return
                     }
-
-                    // terminate if there is at least one deny
-                    return
                 }
-            }
 
-            // there has not been any denies
-            if (mGrantFunc != null) {
-                Log.i(TAG, "Calling Grant Func")
+                // there has not been any denies
                 mGrantFunc?.invoke()
-            } else {
-                Log.e(TAG, "NULL GRANT FUNCTIONS")
             }
         }
     }

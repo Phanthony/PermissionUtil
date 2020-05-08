@@ -43,11 +43,9 @@ class MainActivity : AppCompatActivity() {
             onAskBothPermissionsClick()
         }
         ButterKnife.bind(this)
-        Log.i("TEST", "TEST ACTIVITY")
     }
 
     fun onCheckStoragePermissionClick() {
-        Log.i("TEST", "TEST")
         val hasStoragePermission = hasPermission(WRITE_EXTERNAL_STORAGE)
         updateStatus(if (hasStoragePermission) "Has Storage permission" else "Doesn't have Storage permission")
     }
@@ -62,11 +60,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onAskForStoragePermissionClick() {
-        mStoragePermissionRequest = requestPermission(WRITE_EXTERNAL_STORAGE).onAllGranted {
-            doOnPermissionGranted("Storage")
-        }.onAnyDenied {
-            doOnPermissionDenied("Storage")
-        }.ask(REQUEST_CODE_STORAGE)
+       mStoragePermissionRequest = requestPermission(WRITE_EXTERNAL_STORAGE, REQUEST_CODE_STORAGE,
+                onAllGranted = {
+                    doOnPermissionGranted("Storage")
+                },
+                onAnyDenied = {
+                    doOnPermissionDenied("Storage")
+                })
     }
 
     private fun doOnPermissionDenied(permission: String) {
@@ -78,24 +78,28 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onAskBothPermissionsClick() {
-        mBothPermissionRequest = requestPermission(WRITE_EXTERNAL_STORAGE, WRITE_CONTACTS).onResult { requestCode, permissions, grantResults ->
-            for (i in permissions.indices) {
-                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    doOnPermissionGranted(permissions[i])
-                } else {
-                    doOnPermissionDenied(permissions[i])
+        mBothPermissionRequest = requestPermission(WRITE_EXTERNAL_STORAGE, WRITE_CONTACTS, requestCode = REQUEST_CODE_BOTH,
+                onGivenResult = { requestCode, permissions, grantResults ->
+                    for (i in permissions.indices) {
+                        if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                            doOnPermissionGranted(permissions[i])
+                        } else {
+                            doOnPermissionDenied(permissions[i])
+                        }
+                    }
                 }
-            }
-        }.ask(REQUEST_CODE_BOTH)
+        )
     }
 
     fun onAskForContactsPermissionClick() {
-        mContactsPermissionRequest = requestPermission(WRITE_CONTACTS)
-        mContactsPermissionRequest!!.onAllGranted {
-            doOnPermissionGranted("Contacts")
-        }.onAnyDenied {
-            doOnPermissionDenied("Contacts")
-        }.ask(REQUEST_CODE_CONTACTS)
+       mContactsPermissionRequest = requestPermission(WRITE_CONTACTS, REQUEST_CODE_CONTACTS,
+                onAllGranted = {
+                    doOnPermissionGranted("Contacts")
+                },
+                onAnyDenied = {
+                    doOnPermissionDenied("Contacts")
+                }
+        )
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
